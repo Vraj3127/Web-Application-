@@ -63,29 +63,31 @@
           </div>
           </div>
         </div>
-    </div>
+    
       <div v-else>
         <h1>Checkout page</h1>
         <p>
           <strong>Name: </strong>
-          <input type="text" v-model="order.name" />
+          <input type="text" v-model="order.name">
         </p>
         <p>
           <strong>Surname: </strong>
-          <input type="text" v-model="order.surname" />
+          <input type="text" v-model="order.surname">
         </p>
         <p>
           <strong>Phone: </strong>
-          <input type="tel" v-model="order.phone" />
+          <input type="tel" v-model="order.Phone">
         </p>
-
-        <h2>Information about Order</h2>
+    </div>
+    <div>
+        <h2>Information about your order</h2>
         <p><strong>Name: </strong>{{order.name}}</p>
         <p><strong>Surname: </strong>{{order.surname}}</p>
-        <p><strong>Phone: </strong>{{order.phone}}</p>
+        <p><strong>Phone: </strong>{{order.Phone}}</p>
         <button @click="submitDetails">Place Order</button>
-      </div>
     </div>
+</div>
+    
     <script type="text/javascript">
       // Vue Object contains data
       var CartProduct = new Vue({
@@ -109,7 +111,7 @@
             this.showProduct = this.showProduct ? false : true;
           },
           submitDetails() {
-            alert("Congratulations, we have received your order :)");
+            alert("Congratulations, we have received your order :)")
           },
           canAddToCart(product) {
             return product.spaces > this.cartCount(product.id);
