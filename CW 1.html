@@ -132,17 +132,17 @@
             }
             }
           },
-          remove: function(product){
-            if(this.cart.includes(product)){
-              let index = this.cart.indexOf(product);
-              this.cart.space(index, -1);
-              for (let i = 0; i < this.products.length; i++){
-                if(product ==this.products[i]){
-                  this.products[i].spaces ++;
-                 }
-              }
-            }
-          },
+          // remove: function(product){
+          //   if(this.cart.includes(product)){
+          //     let index = this.cart.indexOf(product);
+          //     this.cart.space(index, 1);
+          //     for (let i = 0; i < this.products.length; i++){
+          //       if(product ==this.products[i]){
+          //         this.products[i].spaces ++;
+          //        }
+          //     }
+          //   }
+          // },
           sortLowestprice() {
             this.products.sort((a, b) => a.price > b.price ? 1 : -1);
           },
