@@ -35,6 +35,13 @@
         <button @click="sortLowestprice">Low price</button>
         <button @click="sortHighestprice">High price</button>
       </h3>
+      <!-- <div>
+      <div v-for="key in Subjects"> {{ key }}</div>
+        <div v-for="entry in filteredSubjects">
+          <div v-for="key in Subjects">{{entry[key]}}
+          </div>
+        </div>
+      </div> -->
       <div v-if="showProduct">
         <div id="product" class="d-flex justify-content-center">
           <div class="card" style="width: 300px">
@@ -177,10 +184,10 @@
           TotalItems: function () {
             return this.cart.length || "";
           },
-          // filteredSubject() {
-          //     let filter = new RegExp(this.filterText, 'i')
-          //     return this.products.filter(el => el.subject.match(filter))
-          // }
+          filteredSubject() {
+              let filter = new RegExp(this.filterText, 'i')
+              return this.products.filter(el => el.subject.match(filter))
+          }
         }
       });
     </script>
