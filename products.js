@@ -27,7 +27,7 @@ let products = [
         "id": 1004,
         "subject": "French",
         "location": "Greenford",
-        "price": "£39",
+        "price": "£299",
         "img": "images/French.jpg",
         "spaces": 15
     },

@@ -91,6 +91,16 @@
         <p><strong>Phone: </strong>{{order.Phone}}</p>
         <button @click="submitDetails">Place Order</button>
     </div>
+    <div v-for="product in checkout">
+      <img v-bind:src="product.img" height="200px" alt="images for subject"/>
+
+         <div class="card-body">
+          <h5>Subject:{{product.subject}}</h5>
+          <h5>Location:{{product.location}}</h5>
+          <h5>Price:{{product.price}}</h5>
+          <h5>Added Spaces:{{TotalItems}}</h5>
+        </div>
+        <button @click="remove(product)">Remove</button>
 </div>
     
     <script type="text/javascript">
@@ -98,9 +108,11 @@
       var CartProduct = new Vue({
         el: "#app",
         data: {
+          // return {
           showProduct: true,
           products: products,
           cart: [],
+          checkout:[],
           filterText: '',
           order: {
             name: "",
@@ -111,13 +123,31 @@
         // Methods to push the product and to show alerts
         methods: {
           addToCart: function (product) {
+            if(product.spaces>=1){
+              product.spaces = product.spaces - 0;
             this.cart.push(product.id);
+            if (!(this.checkout.includes(product)))
+            {
+              this.checkout.push(product);
+            }
+            }
+          },
+          remove: function(product){
+            if(this.cart.includes(product)){
+              let index = this.cart.indexOf(product);
+              this.cart.space(index, -1);
+              for (let i = 0; i < this.products.length; i++){
+                if(product ==this.products[i]){
+                  this.products[i].spaces ++;
+                 }
+              }
+            }
           },
           sortLowestprice() {
             this.products.sort((a, b) => a.price > b.price ? 1 : -1);
           },
           sortHighestprice(){
-            this.products.sort((a, b) => a.price > b.price ? -1 : 1);
+            this.products.sort((a, b) => a.price < b.price ? 1 : -1);
           },
           toggleShowProduct() {
             this.showProduct = this.showProduct ? false : true;
@@ -147,10 +177,10 @@
           TotalItems: function () {
             return this.cart.length || "";
           },
-          filterText() {
-              let filter = new RegExp(this.filterText, 'i')
-              return this.products.filter(el => el.subject.match(filter))
-          }
+          // filteredSubject() {
+          //     let filter = new RegExp(this.filterText, 'i')
+          //     return this.products.filter(el => el.subject.match(filter))
+          // }
         }
       });
     </script>
