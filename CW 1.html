@@ -30,7 +30,11 @@
           <span class="fas fa-shopping-cart"></span>Cart
         </button>
       </header>
-
+      <h3>Search subject: <input v-model ="filterText"/></h3>
+      <h3>Sort: 
+        <button @click="sortLowestprice">Low price</button>
+        <button @click="sortHighestprice">High price</button>
+      </h3>
       <div v-if="showProduct">
         <div id="product" class="d-flex justify-content-center">
           <div class="card" style="width: 300px">
@@ -47,6 +51,7 @@
                  <button type="button" class="btn btn-primary"
                   v-if="canAddToCart(product)"
                   v-on:click="addToCart(product)">
+                  <span class="fas fa-cart-plus"></span>
                   Add to Cart
                  </button>
                 <div v-else>
@@ -54,7 +59,7 @@
                 </div>
                 <div>
                   <span v-if="spacesLeft(product) === 0">No more spaces left!</span>
-                  <span v-else-if="spacesLeft(product) < 6"
+                  <span v-else-if="spacesLeft(product) < 8"
                     >Only {{spacesLeft(product)}} left!</span
                   >
                 </div>
@@ -89,23 +94,30 @@
 </div>
     
     <script type="text/javascript">
-      // Vue Object contains data
+      // Vue data
       var CartProduct = new Vue({
         el: "#app",
         data: {
           showProduct: true,
           products: products,
           cart: [],
+          filterText: '',
           order: {
             name: "",
             surname: "",
             Phone: "",
           },
         },
-        // Methods to push the product-ID
+        // Methods to push the product and to show alerts
         methods: {
           addToCart: function (product) {
             this.cart.push(product.id);
+          },
+          sortLowestprice() {
+            this.products.sort((a, b) => a.price > b.price ? 1 : -1);
+          },
+          sortHighestprice(){
+            this.products.sort((a, b) => a.price > b.price ? -1 : 1);
           },
           toggleShowProduct() {
             this.showProduct = this.showProduct ? false : true;
@@ -130,12 +142,16 @@
           },
           
         },
-        //    functions : toCOUNT, TO AddTOCard and check spaceleft in card
+        //    computed properties
         computed: {
           TotalItems: function () {
             return this.cart.length || "";
           },
-        },
+          filterText() {
+              let filter = new RegExp(this.filterText, 'i')
+              return this.products.filter(el => el.subject.match(filter))
+          }
+        }
       });
     </script>
   </body>
