@@ -184,10 +184,10 @@
           TotalItems: function () {
             return this.cart.length || "";
           },
-          filteredSubject() {
-              let filter = new RegExp(this.filterText, 'i')
-              return this.products.filter(el => el.subject.match(filter))
-          }
+          // filteredSubject() {
+          //     let filter = new RegExp(this.filterText, 'i')
+          //     return this.products.filter(el => el.subject.match(filter))
+          // }
         }
       });
     </script>
