@@ -30,11 +30,14 @@
           <span class="fas fa-shopping-cart"></span>Cart
         </button>
       </header>
+
+      <!-- sort function -->
       <h3>Search subject: <input v-model ="filterText"/></h3>
       <h3>Sort: 
         <button @click="sortLowestprice">Low price</button>
         <button @click="sortHighestprice">High price</button>
       </h3>
+
       <!-- <div>
       <div v-for="key in Subjects"> {{ key }}</div>
         <div v-for="entry in filteredSubjects">
@@ -42,6 +45,7 @@
           </div>
         </div>
       </div> -->
+      
       <div v-if="showProduct">
         <div id="product" class="d-flex justify-content-center">
           <div class="card" style="width: 300px">
@@ -54,6 +58,7 @@
                 <h5>Price:{{product.price}}</h5>
                 <h5>Spaces:{{product.spaces - cartCount(product.id)}}</h5>
               </div>
+
               <div class="text-right">
                  <button type="button" class="btn btn-primary"
                   v-if="canAddToCart(product)"
@@ -77,6 +82,7 @@
         </div>
     
       <div v-else>
+        <!-- checkout page -->
         <h1>Checkout page</h1>
         <p>
           <strong>Name: </strong>
@@ -92,12 +98,14 @@
         </p>
     </div>
     <div>
+
         <h2>Information about your order</h2>
         <p><strong>Name: </strong>{{order.name}}</p>
         <p><strong>Surname: </strong>{{order.surname}}</p>
         <p><strong>Phone: </strong>{{order.Phone}}</p>
         <button @click="submitDetails">Place Order</button>
     </div>
+    
     <div v-for="product in checkout">
       <img v-bind:src="product.img" height="200px" alt="images for subject"/>
 
@@ -119,7 +127,7 @@
           showProduct: true,
           products: products,
           cart: [],
-          checkout:[],
+          // checkout:[],
           filterText: '',
           order: {
             name: "",
