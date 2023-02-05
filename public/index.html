@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- Header & Style-->
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://unpkg.com/vue@2.7.8/dist/vue.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css"
+    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous" />
+  <script src="https://kit.fontawesome.com/07599eed00.js" crossorigin="anonymous"></script>
+
+
+  <title>Vue.js Application</title>
+</head>
+<body>
+  <!-- title -->
+  <div class="d-flex justify-content-center">
+    <h2><b>Subjects App</b></h2>
+  </div>
+
+  <!-- Card Body -->
+  <div id="app">
+    <h3>Filter:
+      <button class="" @click=" lowestprice">Lowest Price</button>
+      <button class="" @click=" highestprice">Highest Price</button>
+      <button class="" @click="sortSubject">Subjects by letters</button>
+      <button class="" @click="sortLocation">Location by letter</button>
+    </h3>
+    <br>
+    <div class="input-group">
+      <label class="form-label" for="form1">
+        <h2> Search Your Subject</h2>
+      </label>
+      <div class="form-outline">
+        <input type="search" id="form1" class="form-control" v-model="searchtext" v-on:input="searchItem" />
+        <br>
+      </div>
+      <button type="button" class="" v-on:click="searchItem">
+        <i class="fas fa-search"></i>
+      </button>
+    </div>
+    <button class="btn btn-primary btn-lg" @click="toggleShowProduct" v-if="card.length>0 ">
+      {{cardItemCount}}
+      <span class="fas fa-shopping-cart"></span>
+      Shopping Cart
+    </button>
+
+    <div id="product" class="col-md" v-if="showProduct">
+      <div>
+        <div class="row">
+          <div v-for="product in products"  :key="products.id">
+            <div class="row">
+              <div class="col">
+                <div class="card-body">
+                  <span class=" fas fa-solid fa-book fa-4x"></span>
+                  <h2>Lessons : {{product.lessons}}</h2>
+                  <h5>Subject:{{product.subject}}</h5>
+                  <h5>Location:{{product.location}}</h5>
+                  <h5>Price: {{product.price}}</h5>
+                  <h5>Spaces Left :{{product.spaces}}</h5>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <img class="img-fluid img-thumbnail" v-bind:src="product.img" height="250px" />
+            </div>
+            
+            <div class="row">
+              <div class="col text-center mt-2 mb-2">
+                <button type="button" class="btn btn-primary" v-on:click="addToCard(product)"
+                  v-if="canAddToCart(product)">
+                  Add to Cart
+                </button>
+                <div v-else>
+                  <button class="btn btn-primary disabled">Add to Card</button>
+                  <p>Item Out Of Stock!</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <div v-else>
+      <div class="col-md-6">
+
+        <h1> Shopping Cart :</h1>
+        <br><br>
+        <div v-for="product in tempcard">
+          <img v-bind:src="product.img" height="250px" />
+
+          <div class="card-body">
+            <span class=" fas fa-solid fa-book fa-4x"></span>
+            <h2>Lessons : {{product.lessons}}</h2>
+            <h5>Subject:{{product.subject}}</h5>
+            <h5>Location:{{product.location}}</h5>
+            <h5>Price: {{product.price}}</h5>
+            <h5>Total Space:{{product.spaces}}</h5>
+            <h5>Spaces Selected:{{tcardCount(product)}}</h5>
+
+            <div class="text-center">
+              <button type="button" class="btn btn-primary" v-on:click="remove(product)">
+                Remove subject
+              </button>
+            </div>
+          </div>
+        </div>
+        <h4>Checkout Page</h5>
+          <strong> FirstName :</strong>
+          <input type="text" v-model.trim="order.firstname" class="form-control" placeholder="Enter Your First Name" />
+
+          <strong> LastName:</strong>
+          <input type="text" v-model.trim="order.lastname" placeholder="Enter Your Last Name" class="form-control" />
+
+          <strong> PhoneNumber:</strong>
+          <input type="tel" v-model.number="order.number" placeholder="Enter your Mobile Number" class="form-control" />
+      </div>
+      <div class="col-md-12 verify">
+        <h2>Order Summary</h2>
+        <pre>
+                First Name: {{order.firstname}}
+                Last Name: {{order.lastname}}
+                Phone Number: {{order.number}}
+            </pre>
+
+
+      </div>
+      <div class="text-center">
+        <button type="submit" class="btn btn-primary btn-lg " v-on:click="submitForm"> Place Your
+          Order</button>
+      </div>
+
+    </div>
+
+  </div>
+  </div>
+
+  <script type="text/javascript">
+
+    // Vue Objects
+    var CardProduct = new Vue({
+      el: "#app",
+      data: {
+        showProduct: true,
+        products: [],
+        searchtext: " ",
+        card: [],
+        tempcard: [],
+        order: {
+          firstname: "",
+          lastname: "",
+          number: "",
+        },
+      },
+      //  fetching data from the server
+      created: function () {
+        fetch("http://localhost:3000/collections/products")
+          .then(response => response.json())
+          .then(json => {
+            CardProduct.products = json;
+          });
+      },
+      // Methods to push the product to the cart
+      methods: {
+        addToCard: function (product) {
+          if (product.spaces >= 1) {
+            product.spaces = product.spaces - 1;
+            this.card.push(product);
+            if (!(this.tempcard.includes(product))) {
+              this.tempcard.push(product);
+            }
+          }
+        },
+        lowestprice() {
+          this.products.sort((a, b) => a.price > b.price ? 1 : -1);
+        },
+        highestprice() {
+          this.products.sort((a, b) => a.price < b.price ? 1 : -1);
+        },
+        sortSubject() {
+          this.products.sort((a, b) => a.subject < b.subject ? -1 : 1);
+        },
+        sortLocation() {
+          this.products.sort((a, b) => a.location < b.location ? -1 : 1);
+        },
+        tcardCount: function (product) {
+          let c = 0;
+          for (let i = 0; i < this.card.length; i++) {
+            if (this.card[i] == product) {
+              c = c + 1;
+            }
+          }
+          return c;
+        },
+
+        searchItem: function (product) {
+          fetch("http://localhost:3000/collections/products" + CardProduct.searchtext).then(function (response) {
+            response.json().then(function (json) {
+
+              CardProduct.products = json;
+            });
+          });
+
+
+        },
+
+        remove: function (product) {
+          if (this.card.includes(product)) {
+            let index = this.card.indexOf(product);
+            this.card.splice(index, 1);
+            for (let i = 0; i < this.products.length; i++) {
+              if (product == this.products[i]) {
+                this.products[i].spaces++;
+              }
+            }
+          }
+        },
+        toggleShowProduct() {
+          this.showProduct = this.showProduct ? false : true;
+        },
+
+
+        submitForm() {
+          if (/^[a-zA-Z]+$/.test(this.order.firstname) && /^[a-zA-Z]+$/.test(this.order.lastname) && /^\d+$/.test(this.order.number)) {
+            let client = {
+              name: this.order.firstname,
+              lastname: this.order.lastname,
+              number: this.order.number,
+              datas: this.tempcard
+            }
+            console.log(client)
+            alert("Congrulatation!!! We have recieved your order");
+            fetch("http://localhost:3000/collections/products", {
+              method: "POST",
+              headers: { "Content-Type": "application/json", },
+              body: JSON.stringify(client)
+            }).then(function (response) {
+              response.text().then(function (text) { });
+            });
+
+            for (let i = 0; i < this.tempcard.length; i++) {
+
+              let carr = this.tempcard[i];
+              console.log(CardProduct.lessonLeft(carr));
+              console.log(carr.id)
+              fetch("http://localhost:3000/collections/products" + carr.id, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json", }, body: JSON.stringify(
+                  { "spaces": CardProduct.lessonLeft(carr) })
+              }).then(function (response) {
+                response.json().then(function (json) { console.log(json) });
+              });
+
+            }
+          }
+          else {
+            alert("Error! validation failed")
+          }
+
+        },
+        canAddToCart(product) {
+          return product.spaces > this.cardCount(product.id);
+        },
+        cardCount(id) {
+          let count = 0;
+          for (let i = 0; i < this.card.length; i++) {
+            if (this.card[i] == id) {
+              count++;
+            }
+          }
+          return count;
+        },
+        lessonsLeft(product) {
+          return product.spaces - this.cardCount(product.id);
+        },
+        lessonLeft(product) {
+          for (let i = 0; i < this.products.length; i++) {
+            if (product == this.products[i]) {
+              return this.products[i].spaces;
+            }
+          }
+
+        },
+      },
+      //    functions : toCOUNT, TO AddTOCard and check Spaceleft in card
+      computed: {
+        cardItemCount: function () {
+          return this.card.length || "";
+        },
+        showitems: function () {
+          return this.product.cardItemCount;
+        },
+        sortedproducts() {
+          function compare(a, b) {
+            if (a.price > b.price) return -1;
+            if (a.price < b.price) return 1;
+            return 0;
+          }
+          return this.products.sort(compare);
+        },
+        locationsortedproducts() {
+          function compare(a, b) {
+            if (a.location > b.location) return -1;
+            if (a.location < b.location) return 1;
+            return 0;
+          }
+          return this.products.sort(compare);
+        },
+        subjectsortedproducts() {
+          function compare(a, b) {
+            if (a.subject > b.subject) return -1;
+            if (a.subject < b.subject) return 1;
+            return 0;
+          }
+          return this.products.sort(compare);
+        },
+        spacessortedproducts() {
+          function compare(a, b) {
+            if (a.spaces > b.spaces) return -1;
+            if (a.spaces < b.spaces) return 1;
+            return 0;
+          }
+          return this.products.sort(compare);
+        },
+
+      }
+
+    });
+
+
+  </script>
+</body>
+
+</html>
